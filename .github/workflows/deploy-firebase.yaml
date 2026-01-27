@@ -1,0 +1,38 @@
+name: Deploy Zips to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - anuj-cuba-zip
+    paths:
+      - "*.zip"
+      - "scripts/extract_asset_zips.sh"
+      - "firebase.json"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install unzip
+        run: sudo apt-get update && sudo apt-get install -y unzip
+
+      - name: Extract root zip files
+        run: bash scripts/extract_asset_zips.sh || true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Deploy to Firebase Hosting
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > serviceAccountKey.json
+          export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
+
+          npm install -g firebase-tools
+          firebase deploy --only hosting:assets-anuj-chimple
