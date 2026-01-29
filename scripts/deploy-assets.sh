@@ -4,38 +4,32 @@ set -euxo pipefail
 PUBLIC_DIR="public"
 mkdir -p "$PUBLIC_DIR"
 
-echo "===== Git status ====="
-git status
-
-echo "===== Current branch ====="
-git branch --show-current
-
-echo "===== Remote branches ====="
-git branch -r
-
-git fetch --all
-
 echo "===== ZIP diff ====="
 git diff --name-status HEAD~1 HEAD -- '*.zip' || true
 
 git diff --name-status HEAD~1 HEAD -- '*.zip' | \
 while IFS=$'\t' read -r status file; do
 
-  echo "Processing: status=$status file=$file"
-
   [[ "$file" == */* ]] && continue
 
-  NAME=$(basename "$file" .zip)
+  NAME="$(basename "$file" .zip)"
   TARGET="$PUBLIC_DIR/$NAME"
+
+  echo "Processing: status=$status zip=$file target=$TARGET"
 
   case "$status" in
     A|M)
-      echo "Updating ZIP: $file → $TARGET"
+      echo "🔄 Updating $TARGET"
+
+      # Clean old content for this ZIP
       rm -rf "$TARGET"
-      unzip -o "$file" -d "$PUBLIC_DIR"
+      mkdir -p "$TARGET"
+
+      # Extract ZIP contents into its own folder
+      unzip -o "$file" -d "$TARGET"
       ;;
     D)
-      echo "Deleting folder: $TARGET"
+      echo "❌ Removing $TARGET (zip deleted)"
       rm -rf "$TARGET"
       ;;
   esac
