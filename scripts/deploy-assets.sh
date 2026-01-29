@@ -1,18 +1,28 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 
 PUBLIC_DIR="public"
 mkdir -p "$PUBLIC_DIR"
 
-# Detect the branch we are running on
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "===== Git status ====="
+git status
 
-git fetch origin "$CURRENT_BRANCH"
+echo "===== Current branch ====="
+git branch --show-current
 
-git diff --name-status "origin/$CURRENT_BRANCH"...HEAD -- '*.zip' | \
+echo "===== Remote branches ====="
+git branch -r
+
+git fetch --all
+
+echo "===== ZIP diff ====="
+git diff --name-status HEAD~1 HEAD -- '*.zip' || true
+
+git diff --name-status HEAD~1 HEAD -- '*.zip' | \
 while IFS=$'\t' read -r status file; do
 
-  # Only root-level ZIPs
+  echo "Processing: status=$status file=$file"
+
   [[ "$file" == */* ]] && continue
 
   NAME=$(basename "$file" .zip)
@@ -20,23 +30,16 @@ while IFS=$'\t' read -r status file; do
 
   case "$status" in
     A|M)
-      echo "🔄 Updating $NAME"
-
-      # Ensure deterministic ownership
+      echo "Updating ZIP: $file → $TARGET"
       rm -rf "$TARGET"
-
-      # ZIP MUST contain a top-level folder named $NAME
       unzip -o "$file" -d "$PUBLIC_DIR"
-
-      # Safety check
-      if [ ! -d "$TARGET" ]; then
-        echo "❌ ERROR: $file does not contain folder '$NAME/'"
-        exit 1
-      fi
       ;;
     D)
-      echo "❌ Removing $TARGET"
+      echo "Deleting folder: $TARGET"
       rm -rf "$TARGET"
       ;;
   esac
 done
+
+echo "===== public/ after extraction ====="
+ls -R public | head -300
