@@ -35,8 +35,6 @@ jobs:
           node-version: 20
 
       - name: Deploy to Firebase Hosting
-        env:
-          FIREBASE_PROJECT: asset-sync-cuba
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SYNC }}" | base64 --decode > serviceAccountKey.json
           export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
