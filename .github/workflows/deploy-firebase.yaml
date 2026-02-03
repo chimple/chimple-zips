@@ -30,29 +30,29 @@ jobs:
         with:
           node-version: 20
 
-      # - name: Deploy to Firebase Hosting
-      #   run: |
-      #     echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SYNC }}" | base64 --decode > serviceAccountKey.json
-      #     export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
-
-      #     npm install -g firebase-tools
-      #     firebase deploy --only hosting:asset-sync-cuba
-
-      - name: Upload extracted files using update-single-file (TEST)
+      - name: Deploy to Firebase Hosting
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SYNC }}" | base64 --decode > serviceAccountKey.json
           export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
 
-          npm install google-auth-library debug minimist
+          npm install -g firebase-tools
+          firebase deploy --only hosting:asset-sync-cuba
 
-          # HARD SAFETY LIMIT
-          MAX_FILES=100
-          FILES=$(find public/ -type f | head -n $MAX_FILES)
+      # - name: Upload extracted files using update-single-file (TEST)
+      #   run: |
+      #     echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SYNC }}" | base64 --decode > serviceAccountKey.json
+      #     export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
 
-          echo "Uploading files:"
-          echo "$FILES"
+      #     npm install google-auth-library debug minimist
 
-          node scripts/update-single-file.cjs --project=asset-sync-cuba $FILES
+      #     # HARD SAFETY LIMIT
+      #     MAX_FILES=100
+      #     FILES=$(find public/ -type f | head -n $MAX_FILES)
+
+      #     echo "Uploading files:"
+      #     echo "$FILES"
+
+      #     node scripts/update-single-file.cjs --project=asset-sync-cuba $FILES
 
       - name: Cleanup credentials
         if: always()
