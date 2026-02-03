@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "chimple-bundles"
+    "default": "chimple-prod"
   }
 }

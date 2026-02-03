@@ -36,7 +36,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
 
           npm install -g firebase-tools
-          firebase deploy --only hosting:chimple-bundles
+          firebase deploy --only hosting:chimple-bundles --project=chimple-prod
 
       # - name: Upload extracted files using update-single-file (TEST)
       #   run: |
@@ -52,7 +52,7 @@ jobs:
       #     echo "Uploading files:"
       #     echo "$FILES"
 
-      #     node scripts/update-single-file.cjs --project=chimple-prod $FILES
+      #     node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-bundles $FILES
 
       - name: Cleanup credentials
         if: always()
