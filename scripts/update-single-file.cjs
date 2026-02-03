@@ -104,7 +104,9 @@ async function main() {
   // Populate files
   const data = {};
   for (const [hash, file] of Object.entries(filesByHash)) {
-    data[file.startsWith("/") ? file : `/${file}`] = hash;
+    // strip leading public/
+    const hostingPath = file.replace(/^public\//, "");
+    data[`/${hostingPath}`] = hash;
   }
 
   const populateRes = await client.request({
