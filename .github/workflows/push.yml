@@ -1,0 +1,20 @@
+name: Push to firebase
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:cuba-stage-zip-bundle
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
