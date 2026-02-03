@@ -1,8 +1,5 @@
 {
   "projects": {
-    "default": "chimple-prod",
-    "chimple-prod": "chimple-prod"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "chimple-bundles"
+  }
 }

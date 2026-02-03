@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "chimple-prod",
+    "site": "chimple-bundles",
     "public": "public",
     "ignore": [
       "firebase.json",
