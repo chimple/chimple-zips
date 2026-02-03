@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "chimple-prod"
-  }
+    "default": "chimple-prod",
+    "chimple-prod": "chimple-prod"
+  },
+  "targets": {},
+  "etags": {}
 }
