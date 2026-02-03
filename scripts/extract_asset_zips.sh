@@ -1,3 +1,5 @@
+# ------------------------- Extract only changed zip files (For CI/CD efficiency)
+
 # !/bin/bash
 set -e
 
@@ -32,7 +34,7 @@ done
 echo "✅ Extraction complete"
 
 
-# ------------------------- Full repo root extraction
+# ------------------------- Full repo root extraction (For Syncing All Zips currently present in REpo)
 
 # #!/bin/bash
 # set -e

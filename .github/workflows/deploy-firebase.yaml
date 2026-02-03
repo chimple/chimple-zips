@@ -30,6 +30,8 @@ jobs:
         with:
           node-version: 20
 
+# -------------------------- For Deploying/Syncing the full repo for first time
+
       # - name: Deploy to Firebase Hosting 1
       #   run: |
       #     echo "${{ secrets.FIREBASE_SERVICE_KEY_PROD }}" | base64 --decode > serviceAccountKey.json
@@ -37,6 +39,8 @@ jobs:
 
       #     npm install -g firebase-tools
       #     firebase deploy --only hosting:chimple-bundles --project=chimple-prod
+
+# -------------------------- For updating single/multiple files (Adding/Updating Zips) 
 
       - name: Upload extracted files using update-single-file (TEST)
         run: |
