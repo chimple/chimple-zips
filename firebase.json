@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "asset-sync-cuba",
+    "site": "chimple-prod",
     "public": "public",
     "ignore": [
       "firebase.json",
