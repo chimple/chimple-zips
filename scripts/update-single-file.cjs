@@ -68,8 +68,9 @@ async function main() {
   // Exclude replaced files
   const exclude = [];
   for (let f of Object.values(filesByHash)) {
-    if (!f.startsWith("/")) f = `/${f}`;
-    exclude.push(`^${f.replace("/", "\\/")}$`);
+    // strip public/
+    const hostingPath = f.replace(/^public\//, "");
+    exclude.push(`^/${hostingPath.replace(/\//g, "\\/")}$`);
   }
 
   // Clone version
