@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Deploy to Firebase Hosting
+      - name: Deploy to Firebase Hosting 1
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SYNC }}" | base64 --decode > serviceAccountKey.json
           export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
