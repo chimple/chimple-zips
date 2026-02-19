@@ -21,7 +21,7 @@
     },
     {
       "site": "cuba-stage-zip-bundle",
-      "public": "public",
+      "public": ".",
       "ignore": [
         "firebase.json",
         "**/.*",
