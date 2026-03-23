@@ -47,7 +47,7 @@ jobs:
           echo "Uploading files:"
           echo "$FILES"
 
-          node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-bundles-dev $FILES
+          node scripts/update-single-file.cjs --project=cuba-stage --site=chimple-bundles-dev $FILES
 
       - name: Cleanup credentials
         if: always()
