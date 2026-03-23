@@ -37,6 +37,44 @@
           ]
         }
       ]
+    },
+    {
+      "site": "cuba-zip-bundle-dev",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "chimple-bundles-dev",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
     }
   ]
 }
