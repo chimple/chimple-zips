@@ -37,17 +37,17 @@ jobs:
 
           npm install google-auth-library debug minimist
 
-          FILES=$(find public -type f)
+          mapfile -d '' FILES < <(find public -type f -print0)
 
-          if [ -z "$FILES" ]; then
+          if [ "${#FILES[@]}" -eq 0 ]; then
             echo "No extracted files to upload. Skipping deploy."
             exit 0
           fi
 
           echo "Uploading files:"
-          echo "$FILES"
+          printf '%s\n' "${FILES[@]}"
 
-          node scripts/update-single-file.cjs --project=cuba-stage --site=chimple-bundles-dev $FILES
+          node scripts/update-single-file.cjs --project=cuba-stage --site=chimple-bundles-dev "${FILES[@]}"
 
       - name: Cleanup credentials
         if: always()
