@@ -1,9 +1,80 @@
 {
   "hosting": [
     {
-      "public": ".",
+      "site": "chimple-bundles",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
+    },
+    {
       "site": "cuba-stage-zip-bundle",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "cuba-zip-bundle-dev",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "chimple-bundles-dev",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+          ]
+        }
+      ]
     }
   ]
 }
