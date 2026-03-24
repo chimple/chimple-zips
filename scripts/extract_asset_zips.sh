@@ -1,6 +1,6 @@
-# ------------------------- Extract only changed zip files (For CI/CD efficiency)
+# ------------------------- Extract zip files (changed / specific / all)
 
-# !/bin/bash
+#!/bin/bash
 set -e
 
 OUT_DIR="public"
@@ -8,16 +8,31 @@ OUT_DIR="public"
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
-echo "🔍 Detecting changed zip files..."
+TARGET_ZIP="$1"
 
-CHANGED_ZIPS=$(git diff --name-only HEAD~1 HEAD -- '*.zip' || true)
+if [ -n "$TARGET_ZIP" ]; then
+  if [ "$TARGET_ZIP" = "ALL" ]; then
+    echo "🔍 Extracting all zip files in repo for full refresh..."
+    mapfile -t CHANGED_ZIPS < <(find . -type f -name '*.zip' | sed 's|^./||')
+  else
+    echo "🔍 Extracting requested zip file: $TARGET_ZIP"
+    if [ ! -f "$TARGET_ZIP" ]; then
+      echo "❌ Provided zip file does not exist: $TARGET_ZIP"
+      exit 1
+    fi
+    CHANGED_ZIPS=("$TARGET_ZIP")
+  fi
+else
+  echo "🔍 Detecting changed zip files..."
+  mapfile -t CHANGED_ZIPS < <(git diff --name-only HEAD~1 HEAD -- '*.zip' || true)
+fi
 
-if [ -z "$CHANGED_ZIPS" ]; then
-  echo "ℹ️ No zip files changed. Skipping extraction."
+if [ ${#CHANGED_ZIPS[@]} -eq 0 ]; then
+  echo "ℹ️ No zip files found to extract. Skipping extraction."
   exit 0
 fi
 
-for zipfile in $CHANGED_ZIPS; do
+for zipfile in "${CHANGED_ZIPS[@]}"; do
   if [ ! -f "$zipfile" ]; then
     echo "⚠️ Skipping missing file: $zipfile"
     continue
