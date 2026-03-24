@@ -31,9 +31,17 @@ jobs:
           node-version: 20
 
       - name: Upload extracted files using update-single-file (DEV BUNDLES)
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
+          cat > firebase-token-adc.json <<EOF
+          {
+            "type": "authorized_user",
+            "client_id": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+            "client_secret": "j9iVZfS8kkCEFUPaAeJV0sAi",
+            "refresh_token": "${FIREBASE_TOKEN}"
+          }
+          EOF
+          export GOOGLE_APPLICATION_CREDENTIALS="$PWD/firebase-token-adc.json"
+
           npm install google-auth-library debug minimist
 
           FILES=$(find public -type f)
@@ -46,12 +54,10 @@ jobs:
           echo "Uploading files:"
           echo "$FILES"
 
-          node scripts/update-single-file.cjs \
-            --project=cuba-stage \
-            --site=chimple-bundles-dev \
-            --token="$FIREBASE_TOKEN" \
-            $FILES
+          node scripts/update-single-file.cjs --project=cuba-stage --site=chimple-bundles-dev $FILES
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Cleanup credentials
         if: always()
-        run: echo "No credentials to clean"
+        run: rm -f firebase-token-adc.json
