@@ -45,9 +45,14 @@ async function main() {
   }
 
   const filesByHash = {};
+  const fileHashes = {};
   for (const file of files) {
-    const hash = await hashFile(file);
-    filesByHash[hash] = file;
+    const normalizedFile = path.normalize(file);
+    const hostingPath = toHostingPath(normalizedFile);
+    const hash = await hashFile(normalizedFile);
+
+    filesByHash[hash] ??= normalizedFile;
+    fileHashes[hostingPath] = hash;
   }
 
   const auth = new GoogleAuth({
@@ -67,10 +72,8 @@ async function main() {
 
   // Exclude replaced files
   const exclude = [];
-  for (let f of Object.values(filesByHash)) {
-    // strip public/
-    const hostingPath = f.replace(/^public\//, "");
-    exclude.push(`^/${hostingPath.replace(/\//g, "\\/")}$`);
+  for (const hostingPath of Object.keys(fileHashes)) {
+    exclude.push(`^/${escapeRegex(hostingPath)}$`);
   }
 
   // Clone version
@@ -103,9 +106,7 @@ async function main() {
 
   // Populate files
   const data = {};
-  for (const [hash, file] of Object.entries(filesByHash)) {
-    // strip leading public/
-    const hostingPath = file.replace(/^public\//, "");
+  for (const [hostingPath, hash] of Object.entries(fileHashes)) {
     data[`/${hostingPath}`] = hash;
   }
 
@@ -177,6 +178,18 @@ async function hashFile(file) {
     gzipStream.once("error", reject);
     gzipStream.pipe(hasher);
   });
+}
+
+function toHostingPath(file) {
+  return file
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .replace(/^public\//, "")
+    .replace(/^\/+/, "");
+}
+
+function escapeRegex(value) {
+  return value.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
 }
 
 main().catch((err) => {

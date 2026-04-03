@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "deploy:partial": "node scripts/update-single-file.cjs"
+  },
   "dependencies": {
     "debug": "^4.4.3",
     "google-auth-library": "^10.5.0",
