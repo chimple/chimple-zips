@@ -44,4 +44,4 @@ jobs:
 
       - name: Deploy to Firebase Hosting
         if: steps.extracted.outputs.count != '0'
-        run: firebase deploy --only hosting:chimple-bundles-dev --project cuba-stage --token "${{ secrets.FIREBASE_TOKEN }}"
+        run: firebase deploy --only hosting:chimple-zips-test-dev --project cuba-stage --token "${{ secrets.FIREBASE_TOKEN }}"

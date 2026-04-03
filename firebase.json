@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "chimple-bundles",
+      "site": "chimple-zips-test",
       "public": "public",
       "ignore": [
         "firebase.json",
@@ -85,7 +85,7 @@
       ]
     },
     {
-      "site": "chimple-bundles.web",
+      "site": "chimple-zips-test.web",
       "public": "public",
       "ignore": [
         "firebase.json",

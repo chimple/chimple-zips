@@ -1,4 +1,4 @@
-name: Deploy All Zips to chimple-bundles
+name: Deploy All Zips to chimple-zips-test
 
 on:
   push:
@@ -43,4 +43,4 @@ jobs:
 
       - name: Deploy extracted files to Firebase Hosting
         if: steps.extracted.outputs.count != '0'
-        run: firebase deploy --only hosting:chimple-bundles --project chimple-prod --token "${{ secrets.FIREBASE_TOKEN }}"
+        run: firebase deploy --only hosting:chimple-zips-test --project ibiza-stage --token "${{ secrets.FIREBASE_TOKEN }}"
