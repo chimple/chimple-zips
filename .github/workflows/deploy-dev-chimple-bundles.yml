@@ -47,14 +47,14 @@ jobs:
           echo "${{ secrets.FIREBASE_SERVICE_KEY_PROD }}" | base64 --decode > serviceAccountKey.json
           export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
 
-          FILES=$(find public -type f)
+          mapfile -d '' FILES < <(find public -type f -print0)
 
-          if [ -z "$FILES" ]; then
+          if [ "${#FILES[@]}" -eq 0 ]; then
             echo "No extracted files to upload. Skipping deploy."
             exit 0
           fi
 
-          node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-bundles $FILES
+          node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-bundles "${FILES[@]}"
 
       - name: Cleanup credentials
         if: always()
