@@ -3,7 +3,7 @@ name: Deploy Zips to chimple-zips-test
 on:
   push:
     branches:
-      - dev
+      - nitesh-main
   workflow_dispatch:
 
 permissions:

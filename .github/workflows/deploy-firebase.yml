@@ -3,7 +3,7 @@ name: Deploy Zips to Firebase Hosting
 on:
   push:
     branches:
-      - main
+      - nitesh-main
   workflow_dispatch:
 
 permissions:
