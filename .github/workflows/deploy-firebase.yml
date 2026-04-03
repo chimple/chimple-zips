@@ -23,6 +23,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y unzip
 
       - name: Run extract script
+        env:
+          BASE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
         run: bash scripts/extract_asset_zips.sh || true
 
       - name: Setup Node.js
@@ -50,6 +53,11 @@ jobs:
           npm install google-auth-library debug minimist
 
           FILES=$(find public -type f)
+
+          if [ -z "$FILES" ]; then
+            echo "No extracted files to upload. Skipping deploy."
+            exit 0
+          fi
 
           echo "Uploading files:"
           echo "$FILES"
