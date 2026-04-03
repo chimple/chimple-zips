@@ -37,25 +37,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install upload dependencies
+      - name: Install Firebase CLI
         if: steps.extracted.outputs.count != '0'
-        run: npm install google-auth-library debug minimist
+        run: npm install -g firebase-tools
 
-      - name: Upload extracted files to Firebase Hosting
+      - name: Deploy extracted files to Firebase Hosting
         if: steps.extracted.outputs.count != '0'
-        run: |
-          echo "${{ secrets.FIREBASE_SERVICE_KEY_PROD }}" | base64 --decode > serviceAccountKey.json
-          export GOOGLE_APPLICATION_CREDENTIALS="$PWD/serviceAccountKey.json"
-
-          mapfile -d '' FILES < <(find public -type f -print0)
-
-          if [ "${#FILES[@]}" -eq 0 ]; then
-            echo "No extracted files to upload. Skipping deploy."
-            exit 0
-          fi
-
-          node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-bundles "${FILES[@]}"
-
-      - name: Cleanup credentials
-        if: always()
-        run: rm -f serviceAccountKey.json
+        run: firebase deploy --only hosting:chimple-bundles --project chimple-prod --token "${{ secrets.FIREBASE_TOKEN }}"
