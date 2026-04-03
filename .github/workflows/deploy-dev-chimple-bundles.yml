@@ -1,4 +1,4 @@
-name: Deploy Zips to chimple-zip-bundles-dev
+name: Deploy Zips to chimple-zips-test
 
 on:
   push:
@@ -47,7 +47,7 @@ jobs:
           echo "Uploading files:"
           echo "$FILES"
 
-          node scripts/update-single-file.cjs --project=chimple-prod --site=chimple-zip-bundles-dev $FILES
+          node scripts/update-single-file.cjs --project=ibiza-stage --site=chimple-zips-test $FILES
 
       - name: Cleanup credentials
         if: always()

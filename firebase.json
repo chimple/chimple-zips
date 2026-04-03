@@ -58,7 +58,7 @@
       ]
     },
     {
-      "site": "chimple-zip-bundles-dev",
+      "site": "chimple-zips-test",
       "public": "public",
       "ignore": [
         "firebase.json",
