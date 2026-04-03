@@ -34,9 +34,6 @@ async function main() {
 
   const SITE_ID = argv.site || PROJECT_ID;
   const files = Array.from(argv._);
-  if (argv["files-stdin-0"]) {
-    files.push(...(await readNullDelimitedPathsFromStdin()));
-  }
 
   if (!files.length) {
     throw new Error("No files provided.");
@@ -180,23 +177,6 @@ async function hashFile(file) {
     gzipStream.once("error", reject);
     gzipStream.pipe(hasher);
   });
-}
-
-async function readNullDelimitedPathsFromStdin() {
-  const chunks = [];
-
-  for await (const chunk of process.stdin) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-
-  if (!chunks.length) {
-    return [];
-  }
-
-  return Buffer.concat(chunks)
-    .toString("utf8")
-    .split("\0")
-    .filter(Boolean);
 }
 
 main().catch((err) => {
