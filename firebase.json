@@ -5,7 +5,6 @@
       "public": "public",
       "ignore": [
         "firebase.json",
-        ".git/**",
         "**/.*",
         "**/node_modules/**"
       ],
@@ -25,7 +24,6 @@
       "public": ".",
       "ignore": [
         "firebase.json",
-        ".git/**",
         "**/.*",
         "**/node_modules/**"
       ],
@@ -45,7 +43,6 @@
       "public": ".",
       "ignore": [
         "firebase.json",
-        ".git/**",
         "**/.*",
         "**/node_modules/**"
       ],
@@ -65,7 +62,6 @@
       "public": "public",
       "ignore": [
         "firebase.json",
-        ".git/**",
         "**/.*",
         "**/node_modules/**"
       ],
