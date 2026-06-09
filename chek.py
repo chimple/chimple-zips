@@ -35,7 +35,7 @@ ALLOWED_EXTENSIONS = {
 
 DOWNLOAD_URL_OVERRIDES = {
     "https://aeakbcdznktpsbrfsgys.supabase.co/storage/v1/object/public/template-assets/fill-upAudio.mp3": (
-        "https://db-stage.chimple.net/storage/v1/object/public/template-assets/fill-in-the-blanks/fillupEn.mp3"
+        ""
     ),
 }
 
