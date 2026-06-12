@@ -79,3 +79,4 @@ jobs:
             --project chimple-prod \
             --token "${{ secrets.FIREBASE_TOKEN }}" \
             --non-interactive
+            --debug
