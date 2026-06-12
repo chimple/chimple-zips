@@ -3,7 +3,7 @@ name: Deploy All Zips to chimple-bundles
 on:
   push:
     branches:
-      - main
+      - unzip-workflow-patch
   workflow_dispatch:
 
 permissions:
