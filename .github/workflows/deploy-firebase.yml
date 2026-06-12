@@ -1,9 +1,9 @@
-name: Deploy All Zips to chimple-bundles
+name: Deploy All Un-Zips to chimple-bundles
 
 on:
   push:
     branches:
-      - unzip-workflow-patch
+      - main
   workflow_dispatch:
 
 permissions:
