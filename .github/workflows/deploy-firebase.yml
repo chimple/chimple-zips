@@ -15,7 +15,7 @@ jobs:
 
     env:
       NODE_OPTIONS: --max-old-space-size=8192
-      FIREBASE_CLI_PREVIEWS: hostingchannels
+      FIREBASE_HOSTING_UPLOAD_CONCURRENCY: 20
 
     steps:
       - name: Checkout repository
@@ -36,9 +36,12 @@ jobs:
       - name: Extract all zip files
         run: bash scripts/extract_asset_zips.sh ALL
 
-      - name: Remove zip files from public folder
+      - name: Clean extracted output
         run: |
           find public -type f -name "*.zip" -delete
+          find public -type f -name "*.log" -delete
+          find public -type f -name ".DS_Store" -delete
+          find public -type d -empty -delete
 
       - name: Check extracted files
         id: extracted
@@ -75,5 +78,4 @@ jobs:
             --only hosting:chimple-bundles \
             --project chimple-prod \
             --token "${{ secrets.FIREBASE_TOKEN }}" \
-            --non-interactive \
-            --debug
+            --non-interactive
