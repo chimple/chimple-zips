@@ -137,14 +137,24 @@ jobs:
               echo "Staging $file"
               mkdir -p "r2-upload/$(dirname "$file")"
               cp "$file" "r2-upload/$file"
+            else
+              echo "WARNING: File not found: $file"
             fi
           done < changed_zips.txt
 
-          if ! find r2-upload -type f -name '*.zip' | grep -q .; then
+          echo "Checking staged ZIP files..."
+
+          zip_count=$(find r2-upload -type f -name '*.zip' | wc -l)
+
+          echo "ZIP files staged: $zip_count"
+
+          if [ "$zip_count" -eq 0 ]; then
             echo "No local ZIP files were available to upload."
             exit 0
           fi
 
+          echo "Uploading ZIP files to R2..."
+          echo "Bucket: $R2_BUCKET_NAME"
           AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
           AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY" \
           aws s3 sync r2-upload "s3://${R2_BUCKET_NAME}" \
@@ -153,6 +163,8 @@ jobs:
             --endpoint-url "$R2_ENDPOINT" \
             --region auto \
             --no-progress
+
+          echo "Upload completed."
 
       - name: Delete removed ZIP files from R2
         shell: bash
