@@ -1,4 +1,4 @@
-name: Deploy All Zips to chimple-bundles-dev
+name: Deploy All Un-Zips to chimple-bundles
 
 on:
   push:
@@ -11,26 +11,71 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+      FIREBASE_HOSTING_UPLOAD_CONCURRENCY: 10
+      PROJECT_ID: chimple-prod
+      HOSTING_TARGET: chimple-bundles
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Install unzip
-        run: sudo apt-get update && sudo apt-get install -y unzip
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+
+      - name: Clean public folder before extraction
+        run: |
+          rm -rf public
+          mkdir -p public
 
       - name: Extract all zip files
         run: bash scripts/extract_asset_zips.sh ALL
 
+      - name: Fix extracted file permissions
+        run: |
+          echo "Fixing permissions without changing folder structure..."
+
+          sudo chown -R "$USER:$USER" public
+
+          find public -type d -exec chmod u+rwx,go+rx {} \;
+          find public -type f -exec chmod u+rw,go+r {} \;
+
+          echo "Checking unreadable files..."
+          UNREADABLE_COUNT=$(find public -type f ! -readable | wc -l | tr -d ' ')
+
+          if [ "$UNREADABLE_COUNT" != "0" ]; then
+            echo "Found unreadable files after chmod:"
+            find public -type f ! -readable | head -50
+            exit 1
+          fi
+
+          echo "All files are readable."
+
       - name: Check extracted files
         id: extracted
         run: |
-          FILE_COUNT=$(find public -type f | wc -l)
+          FILE_COUNT=$(find public -type f | wc -l | tr -d ' ')
           echo "Extracted files: $FILE_COUNT"
           echo "count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
+
+          if [ "$FILE_COUNT" = "0" ]; then
+            echo "No files extracted. Skipping deploy."
+            exit 0
+          fi
+
+          echo "Public folder size:"
+          du -sh public
+
+          echo "Largest files:"
+          find public -type f -printf '%s %p\n' | sort -nr | head -20
+
       - name: Setup Node.js
         if: steps.extracted.outputs.count != '0'
         uses: actions/setup-node@v4
@@ -39,8 +84,17 @@ jobs:
 
       - name: Install Firebase CLI
         if: steps.extracted.outputs.count != '0'
-        run: npm install -g firebase-tools
+        run: npm install -g firebase-tools@13.35.1
+
+      - name: Show Firebase CLI version
+        if: steps.extracted.outputs.count != '0'
+        run: firebase --version
 
       - name: Deploy extracted files to Firebase Hosting
         if: steps.extracted.outputs.count != '0'
         run: firebase deploy --only hosting:chimple-zip-bundles-dev --project chimple-prod --token "${{ secrets.FIREBASE_TOKEN }}"
+          firebase deploy \
+            --only hosting:${HOSTING_TARGET} \
+            --project ${PROJECT_ID} \
+            --token "${{ secrets.FIREBASE_TOKEN }}" \
+            --non-interactive
