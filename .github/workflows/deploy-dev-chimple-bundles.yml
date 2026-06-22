@@ -92,7 +92,7 @@ jobs:
 
       - name: Deploy extracted files to Firebase Hosting
         if: steps.extracted.outputs.count != '0'
-        run: firebase deploy --only hosting:chimple-zip-bundles-dev --project chimple-prod --token "${{ secrets.FIREBASE_TOKEN }}"
+        run: |
           firebase deploy \
             --only hosting:${HOSTING_TARGET} \
             --project ${PROJECT_ID} \
