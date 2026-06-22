@@ -1,4 +1,4 @@
-name: Deploy All Un-Zips to chimple-bundles
+name: Deploy All Un-Zips to chimple-bundles-dev
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
     env:
       NODE_OPTIONS: --max-old-space-size=8192
       FIREBASE_HOSTING_UPLOAD_CONCURRENCY: 10
-      PROJECT_ID: chimple-prod
-      HOSTING_TARGET: chimple-bundles
+      PROJECT_ID: chimple-stage
+      HOSTING_TARGET: chimple-zip-bundles-dev
 
     steps:
       - name: Checkout repository
