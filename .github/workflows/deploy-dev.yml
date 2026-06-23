@@ -26,7 +26,7 @@ jobs:
         if: steps.extracted.outputs.count != '0'
         run: |
           firebase deploy \
-            --only hosting:${HOSTING_TARGET} \
+            --only hosting:${cuba-zip-bundle-dev --project cuba-stage} \
             --project ${PROJECT_ID} \
             --token "${{ secrets.FIREBASE_TOKEN }}" \
             --non-interactive
