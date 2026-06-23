@@ -3,7 +3,7 @@ name: Push to firebase
 on:
   push:
     branches:
-      - Aneesh-mai
+      - main
 jobs:
   build:
     name: Build APK
