@@ -9,6 +9,7 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
@@ -19,3 +20,4 @@ jobs:
           args: deploy --only hosting:cuba-zip-bundle-dev --project cuba-stage
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_VERSION: 13.35.1
