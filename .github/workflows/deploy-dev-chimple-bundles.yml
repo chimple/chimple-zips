@@ -3,7 +3,7 @@ name: Deploy All Un-Zips to chimple-bundles
 on:
   push:
     branches:
-      - dev
+      - Anish-Dev-Branch
   workflow_dispatch:
 
 permissions:
