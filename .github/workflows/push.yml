@@ -3,7 +3,7 @@ name: Push to firebase
 on:
   push:
     branches:
-      - main
+      - Aneesh-mai
 jobs:
   build:
     name: Build APK
@@ -12,9 +12,18 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
 
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only hosting:cuba-stage-zip-bundle --project cuba-stage
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Install Firebase CLI
+        if: steps.extracted.outputs.count != '0'
+        run: npm install -g firebase-tools@13.35.1
+
+      - name: Show Firebase CLI version
+        if: steps.extracted.outputs.count != '0'
+        run: firebase --version
+
+      - name: Deploy extracted files to Firebase Hosting
+        if: steps.extracted.outputs.count != '0'
+        run: |
+          firebase deploy \
+            --only hosting:{cuba-zip-bundle-dev --project cuba-stage} \
+            --token "${{ secrets.FIREBASE_TOKEN }}" \
+            --non-interactive 
