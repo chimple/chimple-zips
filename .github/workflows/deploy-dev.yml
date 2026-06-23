@@ -4,26 +4,85 @@ on:
   push:
     branches:
       - Anish-Dev-Branch-Raj
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    name: Build APK
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-22.04
+
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+      FIREBASE_HOSTING_UPLOAD_CONCURRENCY: 10
+      PROJECT_ID: cuba-stage
+      HOSTING_TARGET: cuba-zip-bundle-dev
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Install Firebase CLI 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+
+      - name: Clean public folder before extraction
+        run: |
+          rm -rf public
+          mkdir -p public
+
+      - name: Extract all zip files
+        run: bash scripts/extract_asset_zips.sh ALL
+
+      - name: Fix extracted file permissions
+        run: |
+          sudo chown -R "$USER:$USER" public
+          find public -type d -exec chmod u+rwx,go+rx {} \;
+          find public -type f -exec chmod u+rw,go+r {} \;
+
+          UNREADABLE_COUNT=$(find public -type f ! -readable | wc -l | tr -d ' ')
+          if [ "$UNREADABLE_COUNT" != "0" ]; then
+            echo "Found unreadable files:"
+            find public -type f ! -readable | head -50
+            exit 1
+          fi
+
+      - name: Check extracted files
+        id: extracted
+        run: |
+          FILE_COUNT=$(find public -type f | wc -l | tr -d ' ')
+          echo "count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
+
+          if [ "$FILE_COUNT" = "0" ]; then
+            echo "No files extracted. Skipping deploy."
+            exit 0
+          fi
+
+          du -sh public
+
+      - name: Setup Node.js
+        if: steps.extracted.outputs.count != '0'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase CLI
+        if: steps.extracted.outputs.count != '0'
         run: npm install -g firebase-tools@13.35.1
 
       - name: Show Firebase CLI version
+        if: steps.extracted.outputs.count != '0'
         run: firebase --version
 
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only hosting:cuba-zip-bundle-dev --project cuba-stage
-        env:  
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_VERSION: 13.35.1
+      - name: Deploy extracted files to Firebase Hosting
+        if: steps.extracted.outputs.count != '0'
+        run: |
+          firebase deploy \
+            --only hosting:${HOSTING_TARGET} \
+            --project ${PROJECT_ID} \
+            --token "${{ secrets.FIREBASE_TOKEN }}" \
+            --non-interactive
