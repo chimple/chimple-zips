@@ -3,7 +3,7 @@ name: Push to firebase (dev cuba)
 on:
   push:
     branches:
-      - dev
+      - Anish-Dev-Branch-Raj
 
 jobs:
   build:
