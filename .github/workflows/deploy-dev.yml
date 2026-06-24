@@ -1,4 +1,4 @@
-name: Push to firebase (dev cuba)
+name: Push to Zips to firebase (dev cuba)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build APK
+    name: Push zips to firebase zips
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,6 @@ jobs:
       - name: Deploy extracted files to Firebase Hosting
         run: |
           firebase deploy \
-            --only hosting:{cuba-zip-bundle-dev --project cuba-stage} \
+            --only hosting:cuba-zip-bundle-dev --project cuba-stage \
             --token "${{ secrets.FIREBASE_TOKEN }}" \
             --non-interactive 
