@@ -187,8 +187,7 @@ delete_removed_zips() {
     echo "Deleting R2 object '$file'"
     if aws_r2 s3 rm "s3://${R2_BUCKET_NAME}/${file}" \
         --endpoint-url "$R2_ENDPOINT" \
-        --region auto \
-        --no-progress; then
+        --region auto; then
       :
     else
       status=$?
