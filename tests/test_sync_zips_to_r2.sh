@@ -109,6 +109,11 @@ case "${AWS_MODE:-ok}:${1:-}:${2:-}" in
   verify-fail:s3api:head-object) exit 1 ;;
   delete-fail:s3:rm) exit 7 ;;
 esac
+if [ "${1:-}" = s3 ] && [ "${2:-}" = rm ]; then
+  for arg in "$@"; do
+    [ "$arg" = --no-progress ] && exit 252
+  done
+fi
 if [ "${1:-}" = s3 ] && [ "${2:-}" = cp ]; then
   key="$(store_key "$4")"
   mkdir -p "${MOCK_R2_ROOT}/$(dirname "$key")"
@@ -183,9 +188,12 @@ sync_deletion_fails() {
   mock_aws "$bin"
   : > "$repo/changed.txt"
   printf 'old.zip\n' > "$repo/deleted.txt"
-  ! (cd "$repo" && PATH="$bin:$PATH" AWS_LOG="$repo/aws.log" AWS_MODE=delete-fail MOCK_R2_ROOT="$TMP_ROOT/store-delete" \
-    R2_BUCKET_NAME=test R2_ENDPOINT=https://example.invalid R2_ACCESS_KEY_ID=x R2_SECRET_ACCESS_KEY=x \
-    CHANGED_ZIPS_FILE=changed.txt DELETED_ZIPS_FILE=deleted.txt bash "$SCRIPT" sync)
+  if (cd "$repo" && PATH="$bin:$PATH" AWS_LOG="$repo/aws.log" AWS_MODE=delete-fail MOCK_R2_ROOT="$TMP_ROOT/store-delete" \
+      R2_BUCKET_NAME=test R2_ENDPOINT=https://example.invalid R2_ACCESS_KEY_ID=x R2_SECRET_ACCESS_KEY=x \
+      CHANGED_ZIPS_FILE=changed.txt DELETED_ZIPS_FILE=deleted.txt bash "$SCRIPT" sync) > "$repo/delete-error.log" 2>&1; then
+    return 1
+  fi
+  grep -Fq "ERROR: failed to delete R2 object 'old.zip'" "$repo/delete-error.log"
 }
 
 run_test 'insert/update, nested paths, spaces, lowercase-only extension policy' collect_insert_update_spaces "$(new_repo)"
